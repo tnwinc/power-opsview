@@ -42,3 +42,15 @@ function Remove-OPSViewKeyword
     $result = Execute-OPSViewRESTCall -verb 'delete' -service $service -OPSViewSession $OPSViewSession
     return $result
 }
+function Set-OPSViewKeyword
+{
+    Param(
+        [Parameter(Mandatory=$True)]$OPSViewKeyword,
+        $properties,
+        $OPSViewSession
+    )
+    $service = '/rest/config/keyword/' + $OPSViewKeyword.id
+    $result = Execute-OPSViewRESTCall -verb 'put' -service $service -OPSViewSession $OPSViewSession -payload (ConvertTo-Json $properties)
+    return $result
+
+}
