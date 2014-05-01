@@ -5,10 +5,12 @@
 function Get-OPSViewDowntime
 {
     Param(
-        [string]$objectType,
+        $OPSViewHost,
         $filter,
         $OPSViewSession
     )
+    if (!$filter) { $filter = @{} }
+    if ($OPSViewHost) { $filter['hostname'] = $OPSViewHost.name }
     $service = '/rest/downtime'
 
     #Write-Host $service
@@ -54,7 +56,6 @@ function Remove-OPSViewDowntime
     }
     $parameters['comment'] = $OPSViewDowntime.comment
     $parameters['starttime'] = $OPSViewDowntime.start_time
-    echo $parameters | ft
     $result = Execute-OPSViewRESTCall -verb 'delete' -service $service -parameters $parameters
     return $result
 }
