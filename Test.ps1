@@ -16,8 +16,13 @@ function Remove-OPSViewDowntime
     $service = '/rest/downtime'
     
     $parameters = @{}
-    $parameters['hst.hostname'] = 'N1-LAB-REL-001'
-    $OPSViewDowntime.objects = $null
+    if ($OPSViewDowntime.objects.hosts)
+    {
+        $parameters['hst.hostname'] = $OPSViewDowntime.objects.hosts[0].hostname
+    }
+    $parameters['comment'] = $OPSViewDowntime.comment
+    $parameters['starttime'] = $OPSViewDowntime.start_time
+    echo $parameters | ft
     $result = Execute-OPSViewRESTCall -verb 'delete' -service $service -parameters $parameters
     return $result
 }
@@ -29,9 +34,14 @@ $dt = Add-OPSViewDowntime -OPSViewHost $h -starttime "now" -duration "+2h" -comm
 
 echo $dt
 #>
+$h = Get-OPSViewHost -name "N1-LAB-REL-001"
 
-$dt = Get-OPSViewDowntime
+<#
+$dt = Add-OPSViewDowntime -OPSViewHost $h -starttime "now" -duration "+2h" -comment "baz"
+echo $dt
+#>
 
+$dt = Get-OPSViewDowntime -filter @{'hostname'=$h.name}
 echo $dt
 
 #Remove-OPSViewDowntime -OPSViewDowntime $dt

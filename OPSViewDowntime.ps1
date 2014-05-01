@@ -1,4 +1,8 @@
-﻿function Get-OPSViewDowntime
+﻿<#
+
+#>
+
+function Get-OPSViewDowntime
 {
     Param(
         [string]$objectType,
@@ -6,16 +10,9 @@
         $OPSViewSession
     )
     $service = '/rest/downtime'
-    if ($filter.count)
-    {
-        $service += "?"
-        foreach ($f in $filter)
-        {
-            $service += "s." + $f.keys + "=" + $f.Values
-        }
-    }
+
     #Write-Host $service
-    $result = Execute-OPSViewRESTCall -service $service -verb "get" -OPSViewSession $OPSViewSession
+    $result = Execute-OPSViewRESTCall -service $service -verb "get" -OPSViewSession $OPSViewSession -parameters $filter
     return $result.list
 }
 
@@ -40,5 +37,24 @@ function Add-OPSViewDowntime
     if ($OPSViewHost) { $parameters['hst.hostname'] = $OPSViewHost.name }
 
     $result = Execute-OPSViewRESTCall -verb 'post' -service $service -parameters $parameters
+    return $result
+}
+function Remove-OPSViewDowntime
+{
+    Param(
+        [Parameter(Mandatory=$True)]$OPSViewDowntime,
+        $OPSViewSession
+    )
+    $service = '/rest/downtime'
+    
+    $parameters = @{}
+    if ($OPSViewDowntime.objects.hosts)
+    {
+        $parameters['hst.hostname'] = $OPSViewDowntime.objects.hosts[0].hostname
+    }
+    $parameters['comment'] = $OPSViewDowntime.comment
+    $parameters['starttime'] = $OPSViewDowntime.start_time
+    echo $parameters | ft
+    $result = Execute-OPSViewRESTCall -verb 'delete' -service $service -parameters $parameters
     return $result
 }
