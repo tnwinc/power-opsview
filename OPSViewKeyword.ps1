@@ -13,9 +13,23 @@
     $result = Get-OPSViewconfig -objectType 'keyword' -filter $filter -OPSViewSession $OPSViewSession
     return $result.list
 }
-function Add-OPSViewKeyword
+Function Add-OPSViewKeyword
 {
+    Param(
+        [Parameter(Mandatory=$True)]$name,
+        $clone,
+        $properties,
+        $OPSViewSession
+    )
+    $service = "/rest/config/keyword"
 
+    if ($clone) { $service += "/" + $clone.id }
+    if (!$properties) { $properties = @{} }
+
+    $properties['name'] = $name
+
+    $result = Execute-OPSViewRESTCall -verb 'post' -service $service -payload (ConvertTo-Json $properties) -OPSViewSession $OPSViewSession
+    return $result
 }
 function Remove-OPSViewKeyword
 {
