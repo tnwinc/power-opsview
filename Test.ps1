@@ -4,3 +4,8 @@ ForEach-Object {
 }
 
 . .\Connect.ps1
+
+#$k = Get-OPSViewKeyword -name "labrie"
+
+
+#Remove-OPSViewKeyword -OPSViewKeyword $k
