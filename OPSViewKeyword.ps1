@@ -34,7 +34,7 @@ Function Add-OPSViewKeyword
 function Remove-OPSViewKeyword
 {
     Param(
-        $OPSViewKeyword,
+        [Parameter(Mandatory=$True)]$OPSViewKeyword,
         $OPSViewSession
     )
     if (!$OPSViewKeyword.id) { Throw "Delete-OPSViewHost requires a keyword object. Use Get-OPSViewKeyword." }
