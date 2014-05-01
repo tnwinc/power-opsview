@@ -14,25 +14,6 @@
     return $result.list
 }
 
-function Remove-OPSViewDowntime
-{
-    Param(
-        [Parameter(Mandatory=$True)]$OPSViewDownTime
-    )
-    write-host "-------------------"
-    write-host $OPSViewDownTime | ft
-    
-    echo OPSViewEpoch -timestamp $OPSViewDownTime.start_time
-    $service = '/rest/downtime'
-    $service += "h.name=IT-NETOPS"
-    #$service += '?start_time=' + (OPSViewEpoch -timestamp $OPSViewDownTime.start_time)
-    #$service += '&comment=' + [System.Web.HttpUtility]::UrlEncode($OPSViewDownTime.comment)
-
-    write-host $service
-    $result = Execute-OPSViewRESTCall -service $service -verb "delete"
-    write-host $result
-}
-
 function Add-OPSViewHost
 {
     Param(
@@ -56,7 +37,7 @@ function Add-OPSViewHost
     return $result
 }
 
-function Delete-OPSViewHost
+function Remove-OPSViewHost
 {
     Param(
         [Alias("host")]$OPSViewHost,

@@ -17,7 +17,7 @@ function Add-OPSViewKeyword
 {
 
 }
-function Delete-OPSViewKeyword
+function Remove-OPSViewKeyword
 {
 
 }
