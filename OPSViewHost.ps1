@@ -40,10 +40,10 @@ function Add-OPSViewHost
 function Remove-OPSViewHost
 {
     Param(
-        [Alias("host")]$OPSViewHost,
+        [Parameter(Mandatory=$True)]$OPSViewHost,
         $OPSViewSession
     )
-    if (!$host.id) { Throw "Delete-OPSViewHost requires a host object. Use Get-OPSViewHost." }
+    if (!$OPSViewHost.id) { Throw "Delete-OPSViewHost requires a host object. Use Get-OPSViewHost." }
     $service = '/rest/config/host/' + $OPSViewHost.id
     $result = Execute-OPSViewRESTCall -verb 'delete' -service $service -OPSViewSession $OPSViewSession
     return $result
@@ -51,7 +51,7 @@ function Remove-OPSViewHost
 function Set-OPSViewHost
 {
     Param(
-        [Alias("host")]$OPSViewHost,
+        [Parameter(Mandatory=$True)]$OPSViewHost,
         $properties,
         $OPSViewSession
     )
