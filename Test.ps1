@@ -7,41 +7,16 @@ ForEach-Object {
 
 
 
-function Remove-OPSViewDowntime
-{
-    Param(
-        [Parameter(Mandatory=$True)]$OPSViewDowntime,
-        $OPSViewSession
-    )
-    $service = '/rest/downtime'
-    
-    $parameters = @{}
-    if ($OPSViewDowntime.objects.hosts)
-    {
-        $parameters['hst.hostname'] = $OPSViewDowntime.objects.hosts[0].hostname
-    }
-    $parameters['comment'] = $OPSViewDowntime.comment
-    $parameters['starttime'] = $OPSViewDowntime.start_time
-    echo $parameters | ft
-    $result = Execute-OPSViewRESTCall -verb 'delete' -service $service -parameters $parameters
-    return $result
-}
+$computername = "N1-LAB-REL-001"
 
-<#
-$h = Get-OPSViewHost -name "N1-LAB-REL-001"
-echo $h
-$dt = Add-OPSViewDowntime -OPSViewHost $h -starttime "now" -duration "+2h" -comment "The system is down."
-
-echo $dt
-#>
-$h = Get-OPSViewHost -name "N1-LAB-REL-001"
-
-<#
-$dt = Add-OPSViewDowntime -OPSViewHost $h -starttime "now" -duration "+2h" -comment "baz"
-echo $dt
-#>
-
-$dt = Get-OPSViewDowntime -filter @{'hostname'=$h.name}
+$h = Get-OPSViewHost -name $computername
+$dt = Add-OPSViewDowntime -OPSViewHost $h -starttime "now" -duration "+5m" -comment "Restart IIS"
+$s = Get-Service -ComputerName $computername -Name w3svc
+$s.stop()
+$s.start()
 echo $dt
 
-#Remove-OPSViewDowntime -OPSViewDowntime $dt
+sleep 1 #OPSView actions are asynchronous so a quick sleep makes sure it posted before trying to remove
+$dt = Get-OPSViewDowntime -OPSViewHost $h
+Remove-OPSViewDowntime -OPSViewDowntime $dt
+
